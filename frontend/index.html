@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Feedback System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-graduation-cap"></i> Classroom Feedback System
+                </h1>
+                <nav class="tab-navigation">
+                    <button type="button" class="tab-btn active" onclick="showTab('feedback', this)">
+                        <i class="fas fa-pen-fancy"></i> Submit Feedback
+                    </button>
+                    <button type="button" class="tab-btn" onclick="showTab('dashboard', this)">
+                        <i class="fas fa-chart-bar"></i> Dashboard
+                    </button>
+                    <button type="button" class="tab-btn" onclick="showTab('profile', this)">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Success/Error Notification -->
+            <div id="notification" class="notification"></div>
+
+            <!-- FEEDBACK SUBMISSION TAB -->
+            <section id="feedback" class="tab-section active">
+                <div class="form-container">
+                    <h2><i class="fas fa-comment-dots"></i> Your Feedback Matters</h2>
+                    <p class="subtitle">Help us improve by sharing your experience</p>
+
+                    <form id="feedbackForm" class="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+                        <!-- Anonymous Option -->
+                        <div class="form-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="anonymous" onchange="toggleStudentId()">
+                                <span><i class="fas fa-mask"></i> Submit Anonymously</span>
+                            </label>
+                        </div>
+
+                        <!-- Course Selection -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="courseId"><i class="fas fa-book"></i> Select Your Course <span class="required">*</span></label>
+                                <select id="courseId" required>
+                                    <option value="">-- Choose your course --</option>
+                                    <option value="CS101">Computer Science 101</option>
+                                    <option value="MATH201">Advanced Mathematics</option>
+                                    <option value="ENG301">English Literature</option>
+                                    <option value="PHYS401">Physics Fundamentals</option>
+                                    <option value="CHEM202">Chemistry Lab</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="studentIdGroup">
+                                <label for="studentId"><i class="fas fa-id-card"></i> Student ID <span class="required">*</span></label>
+                                <input type="text" id="studentId" placeholder="e.g., STU2024001" pattern="[A-Za-z0-9]+" maxlength="20">
+                            </div>
+                        </div>
+
+                        <!-- TEACHING QUALITY SECTION -->
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-chalkboard-user"></i> Teaching Quality</h3>
+                            <div class="question-group">
+
+                                <label class="question-label">1. How clear were the instructor'"'"'s explanations? <span class="required">*</span></label>
+                                <div class="rating-scale">
+                                    <input type="radio" id="clarity5" name="clarity" value="5" required>
+                                    <label class="rating-label" for="clarity5">Excellent</label>
+                                    <input type="radio" id="clarity4" name="clarity" value="4">
+                                    <label class="rating-label" for="clarity4">Good</label>
+                                    <input type="radio" id="clarity3" name="clarity" value="3">
+                                    <label class="rating-label" for="clarity3">Average</label>
+                                    <input type="radio" id="clarity2" name="clarity" value="2">
+                                    <label class="rating-label" for="clarity2">Poor</label>
+                                    <input type="radio" id="clarity1" name="clarity" value="1">
+                                    <label class="rating-label" for="clarity1">Very Poor</label>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">2. Was the lecture pace appropriate? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="pace" value="5" required> Too fast (but manageable)</label>
+                                    <label><input type="radio" name="pace" value="4"> Just right</label>
+                                    <label><input type="radio" name="pace" value="3"> A bit slow</label>
+                                    <label><input type="radio" name="pace" value="2"> Too slow</label>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">3. Effective teaching methods used? <span class="required">*</span></label>
+                                <div class="checkbox-group-list">
+                                    <label><input type="checkbox" name="methods" value="lectures"> Clear lectures</label>
+                                    <label><input type="checkbox" name="methods" value="examples"> Real-world examples</label>
+                                    <label><input type="checkbox" name="methods" value="interactive"> Interactive activities</label>
+                                    <label><input type="checkbox" name="methods" value="visuals"> Visual aids</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTENT & CLARITY SECTION -->
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-lightbulb"></i> Content & Clarity</h3>
+                            <div class="question-group">
+                                <label class="question-label">4. How difficult was the course content? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="difficulty" value="5" required> Too difficult</label>
+                                    <label><input type="radio" name="difficulty" value="4"> Challenging but manageable</label>
+                                    <label><input type="radio" name="difficulty" value="3"> Just right</label>
+                                    <label><input type="radio" name="difficulty" value="2"> Too easy</label>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">5. Were course materials helpful? <span class="required">*</span></label>
+                                <select name="materials" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="5">Extremely helpful</option>
+                                    <option value="4">Helpful</option>
+                                    <option value="3">Somewhat helpful</option>
+                                    <option value="2">Not very helpful</option>
+                                    <option value="1">Not helpful</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ENGAGEMENT SECTION -->
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-handshake"></i> Student Engagement</h3>
+                            <div class="question-group">
+                                <label class="question-label">6. How actively did you participate? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="participation" value="5" required> Very active</label>
+                                    <label><input type="radio" name="participation" value="4"> Active</label>
+                                    <label><input type="radio" name="participation" value="3"> Moderate</label>
+                                    <label><input type="radio" name="participation" value="2"> Passive</label>
+                                    <label><input type="radio" name="participation" value="1"> Inactive</label>
+                                </div>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">7. Instructor encouraged participation? <span class="required">*</span></label>
+                                <select name="encouragement" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="5">Strongly encouraged</option>
+                                    <option value="4">Encouraged</option>
+                                    <option value="3">Neutral</option>
+                                    <option value="2">Discouraged</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- SUPPORT SECTION -->
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-life-ring"></i> Support & Resources</h3>
+                            <div class="question-group">
+                                <label class="question-label">8. How responsive was the instructor? <span class="required">*</span></label>
+                                <select name="support" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="5">Excellent</option>
+                                    <option value="4">Good</option>
+                                    <option value="3">Average</option>
+                                    <option value="2">Poor</option>
+                                    <option value="1">Very poor</option>
+                                </select>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">9. What resources would help you?</label>
+                                <div class="checkbox-group-list">
+                                    <label><input type="checkbox" name="resources" value="examples"> More practice problems</label>
+                                    <label><input type="checkbox" name="resources" value="videos"> Video recordings</label>
+                                    <label><input type="checkbox" name="resources" value="guides"> Study guides</label>
+                                    <label><input type="checkbox" name="resources" value="tutoring"> Tutoring sessions</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OVERALL ASSESSMENT -->
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-star"></i> Overall Assessment</h3>
+                            <div class="question-group">
+                                <label class="question-label">10. Overall satisfaction? <span class="required">*</span></label>
+                                <select id="overall" name="overall" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="5">Very satisfied</option>
+                                    <option value="4">Satisfied</option>
+                                    <option value="3">Neutral</option>
+                                    <option value="2">Dissatisfied</option>
+                                    <option value="1">Very dissatisfied</option>
+                                </select>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">11. Key takeaway from this course <span class="required">*</span></label>
+                                <textarea id="keyLearning" name="key_learning" placeholder="What was the most important thing you learned?" maxlength="500" required></textarea>
+                                <small>Max 500 characters</small>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">12. Suggestions for improvement <span class="required">*</span></label>
+                                <textarea id="suggestions" name="suggestions" placeholder="How can we improve this course?" maxlength="1000" required></textarea>
+                                <small>Max 1000 characters</small>
+                            </div>
+                            <div class="question-group">
+                                <label class="question-label">13. Would you recommend this course? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="recommendation" value="5" required> Definitely yes</label>
+                                    <label><input type="radio" name="recommendation" value="4"> Probably yes</label>
+                                    <label><input type="radio" name="recommendation" value="3"> Not sure</label>
+                                    <label><input type="radio" name="recommendation" value="2"> Probably not</label>
+                                    <label><input type="radio" name="recommendation" value="1"> Definitely not</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+                            <button type="reset" class="btn-reset"><i class="fas fa-redo"></i> Clear Form</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- DASHBOARD TAB -->
+            <section id="dashboard" class="tab-section">
+                <div class="dashboard-container">
+                    <h2><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+                    <div class="dashboard-controls">
+                        <select id="courseSelector" onchange="onCourseChange()">
+                            <option value="CS101">Computer Science 101</option>
+                            <option value="MATH201">Advanced Mathematics</option>
+                            <option value="ENG301">English Literature</option>
+                            <option value="PHYS401">Physics Fundamentals</option>
+                            <option value="CHEM202">Chemistry Lab</option>
+                        </select>
+                        <button type="button" onclick="loadAnalytics()" class="btn-refresh"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+
+                    <div class="dashboard-panels">
+                        <div class="dashboard-panel panel-sentiment">
+                            <div class="panel-header">
+                                <div>
+                                    <span class="panel-icon"><i class="fas fa-smile"></i></span>
+                                    <h3>Sentiment Distribution</h3>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-box">
+                                    <canvas id="sentimentChart"></canvas>
+                                </div>
+                                <div class="legend-row">
+                                    <span class="legend-item legend-positive"><span></span> Positive</span>
+                                    <span class="legend-item legend-neutral"><span></span> Neutral</span>
+                                    <span class="legend-item legend-negative"><span></span> Negative</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panel panel-rating">
+                            <div class="panel-header">
+                                <div>
+                                    <span class="panel-icon"><i class="fas fa-star"></i></span>
+                                    <h3>Average Rating</h3>
+                                </div>
+                            </div>
+                            <div class="panel-body rating-card-body">
+                                <div class="rating-card-block">
+                                    <div class="rating-score" id="averageRating">--</div>
+                                </div>
+                                <p class="rating-text">Average course rating from your latest feedback.</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panel panel-trends">
+                            <div class="panel-header">
+                                <div>
+                                    <span class="panel-icon"><i class="fas fa-chart-line"></i></span>
+                                    <h3>Feedback Trends</h3>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-box">
+                                    <canvas id="trendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROFILE TAB -->
+            <section id="profile" class="tab-section">
+                <div class="profile-container">
+                    <h2><i class="fas fa-user-circle"></i> Your Profile & About</h2>
+
+                    <div class="profile-card">
+                        <h3>Your Feedback Summary</h3>
+                        <div class="profile-content">
+                            <div class="profile-field">
+                                <label>Student ID:</label>
+                                <p id="profileStudentId">Not provided</p>
+                            </div>
+                            <div class="profile-field">
+                                <label>Total Feedback Submitted:</label>
+                                <p id="profileFeedbackCount">0</p>
+                            </div>
+                            <div class="profile-field">
+                                <label>Last Submission:</label>
+                                <p id="profileLastSubmission">Not yet submitted</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <h3>About This System</h3>
+                        <div class="profile-content">
+                            <p>The Classroom Feedback System helps improve teaching and learning by collecting student insights.</p>
+                            <ul class="features-list">
+                                <li><strong>Anonymous Options:</strong> Submit privately if you prefer</li>
+                                <li><strong>AI Analysis:</strong> Sentiment analysis on all feedback</li>
+                                <li><strong>Real-time Dashboard:</strong> Instant instructor insights</li>
+                                <li><strong>Data Privacy:</strong> Your information is securely protected</li>
+                                <li><strong>Actionable Feedback:</strong> Drives continuous improvement</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <h3>Privacy & Security</h3>
+                        <div class="profile-content">
+                            <p>Your privacy is paramount. Anonymous submissions are confidential and personal data is protected.</p>
+                            <div class="info-box">
+                                <strong>Note:</strong> We analyze feedback patterns, never individual submissions.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Classroom Feedback System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
